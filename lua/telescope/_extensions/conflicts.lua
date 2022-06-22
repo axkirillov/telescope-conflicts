@@ -9,9 +9,13 @@ end
 
 M = {}
 
-M.changed_files = function(opts)
+ M.pick = function(opts)
 	local command = "git diff --name-only --diff-filter=U --relative"
 	local handle = io.popen(command)
+	if handle == nil then
+		print("could not execute" .. command)
+		return
+	end
 	local result = handle:read("*a")
 	handle:close()
 
@@ -23,7 +27,7 @@ M.changed_files = function(opts)
 	opts = opts or {}
 
 	pickers.new(opts, {
-		prompt_title = "conflicts",
+		prompt_title = "conflicting files",
 		finder = finders.new_table {
 			results = files
 		},
@@ -33,6 +37,6 @@ end
 
 return telescope.register_extension {
 	exports = {
-		conflicts = M.conflicts,
+		conflicts = M.pick,
 	}
 }
